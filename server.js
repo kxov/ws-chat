@@ -4,9 +4,9 @@ const port = 6663;
 
 const wss = new WebSocketServer({ port });
 
-wss.on('connection', function connection(ws, req) {
+wss.on('connection', (ws, req) => {
 
-  ws.on('message', function message(data, isBinary) {
+  ws.on('message', (data, isBinary) => {
 
     for (const client of wss.clients) {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
@@ -15,6 +15,6 @@ wss.on('connection', function connection(ws, req) {
     }
   });
 
-  console.log(`new connection ${req.socket.remoteAddress}!`);
+  console.log(`new connection from ${req.socket.remoteAddress}!`);
 
 });
