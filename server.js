@@ -17,13 +17,15 @@ server.listen(port, () => {
 const wss = new WebSocketServer({ server });
 
 const clients = new Set();
+const messages = [];
 
 wss.on('connection', (ws, req) => {
+    const ip = req.socket.remoteAddress;
+    console.log(`New connection from ${ip}!`);
 
     clients.add(ws);
 
     ws.on('message', (data, isBinary) => {
-
         for (const client of wss.clients) {
             if (client !== ws && client.readyState === WebSocket.OPEN) {
                 client.send(data, { binary: isBinary });
@@ -31,8 +33,9 @@ wss.on('connection', (ws, req) => {
         }
     });
 
+    ws.on('close', () => {
+        console.log(`Disconnected ${ip}`);
 
-    const ip = req.socket.remoteAddress;
-
-    console.log(`new connection from ${ip}!`);
+        clients.delete(ws);
+    });
 });
