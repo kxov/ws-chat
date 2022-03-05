@@ -1,49 +1,42 @@
-<h1>Real Time Messaging</h1>
-<pre id="messages" style="height: 400px; overflow: scroll"></pre>
-<input type="text" id="messageBox" placeholder="Type your message here" style="display: block; width: 100%; margin-bottom: 10px; padding: 10px;" />
-<button id="send" title="Send Message!" style="width: 100%; height: 30px;">Send Message</button>
+<h1>Chat</h1>
+<div id="messages"></div>
+
+<input type="text" id="message" placeholder="Type your message here"/>
+
+<button id="send" title="Send!">Send Message</button>
 
 <script>
-  (() => {
-    const sendBtn = document.querySelector('#send');
-    const messages = document.querySelector('#messages');
-    const messageBox = document.querySelector('#messageBox');
+    const sendBtn = document.getElementById('send');
+    const messages = document.getElementById('messages');
+    const message = document.getElementById('message');
 
-    const showMessage = (message) => {
-      messages.textContent += `\n\n${message}`;
-      messages.scrollTop = messages.scrollHeight;
-      messageBox.value = '';
+    const showMessage = (socketMsg) => {
+        const line = document.createElement('div');
+        line.innerHTML = `<p>${socketMsg}</p>`;
+        messages.appendChild(line);
+
+        message.value = '';
     }
 
-    const ws = new WebSocket('ws://localhost:6663');
+    const ws = new WebSocket('ws://localhost:6663/chat');
 
-     ws.onopen = () => {
-       console.log('Connection opened!');
-     }
+    ws.onopen = () => {
+        console.log('Connection opened!');
+    }
+    ws.onmessage = ({ data }) => showMessage(data);
 
-     ws.onmessage = ({ data }) => showMessage(data);
-
-     ws.onclose = (event) => {
-         if (event.wasClean) {
-             alert('Соединение закрыто чисто');
-         } else {
-             alert('Обрыв соединения'); // например, "убит" процесс сервера
-         }
-         alert('Код: ' + event.code + ' причина: ' + event.reason);
-     }
+    ws.onclose = (event) => {
+        console.log('Код: ' + event.code + ' причина: ' + event.reason);
+    }
 
     sendBtn.onclick = () => {
-      if (!ws) {
-        showMessage("No WebSocket connection :(");
-        return;
-      }
+        if (!ws) {
+             showMessage("No WebSocket connection :(");
+             return;
+        }
 
-      ws.send(messageBox.value, (data) => {
-        console.log('ssd');
-      });
+        ws.send(message.value);
 
-      showMessage(messageBox.value);
+        showMessage(message.value);
     }
-
-  })();
 </script>
