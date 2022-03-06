@@ -12,7 +12,7 @@
 
     const showMessage = (socketMessages) => {
 
-        const messages = JSON.parse(socketMessages.data ?? socketMessages);
+        const messages = JSON.parse(socketMessages);
 
         for (const message of messages) {
             const line = document.createElement('div');
@@ -28,7 +28,7 @@
     ws.onopen = () => {
         console.log('Connection opened!');
     }
-    ws.onmessage = ( data ) => showMessage(data);
+    ws.onmessage = ( { data } ) => showMessage(data);
 
     ws.onclose = (event) => {
         console.log('Код: ' + event.code + ' причина: ' + event.reason);
