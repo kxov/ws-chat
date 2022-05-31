@@ -31,7 +31,7 @@
     ws.onmessage = ({ data }) => showMessage(data);
 
     ws.onclose = (event) => {
-      console.log('Code: ' + event.code + ' reason: ' + event.reason);
+      console.log(`Code: ${event.code} reason: ${event.reason}`);
     };
 
     sendBtn.onclick = () => {
