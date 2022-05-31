@@ -1,8 +1,8 @@
 <h1>Chat</h1>
 <div id="chat"></div>
 
-<input type="text" id="username" placeholder="Type your nickname"/>
-<input type="text" id="message" placeholder="Type your message here"/>
+<input type="text" id="username" placeholder="username"/>
+<input type="text" id="message" placeholder="message"/>
 
 <button id="send" title="Send!">Send Message</button>
 
@@ -12,40 +12,40 @@
 
     const showMessage = (socketMessages) => {
 
-        const messages = JSON.parse(socketMessages);
+      const messages = JSON.parse(socketMessages);
 
-        for (const message of messages) {
-            const line = document.createElement('div');
-            line.innerHTML = `<p>${message.username}: ${message.message}</p>`;
-            chat.appendChild(line);
+      for (const message of messages) {
+        const line = document.createElement('div');
+        line.innerHTML = `<p>${message.username}: ${message.message}</p>`;
+        chat.appendChild(line);
 
-            message.value = '';
-        }
-    }
+        message.value = '';
+      }
+    };
 
     const ws = new WebSocket('ws://localhost:6663/chat');
 
     ws.onopen = () => {
-        console.log('Connection opened!');
-    }
-    ws.onmessage = ( { data } ) => showMessage(data);
+      console.log('Connection opened!');
+    };
+    ws.onmessage = ({ data }) => showMessage(data);
 
     ws.onclose = (event) => {
-        console.log('Code: ' + event.code + ' reason: ' + event.reason);
-    }
+      console.log('Code: ' + event.code + ' reason: ' + event.reason);
+    };
 
     sendBtn.onclick = () => {
-        if (!ws) {
-             showMessage("No WebSocket connection :(");
-             return;
-        }
+      if (!ws) {
+        showMessage('No WebSocket connection :(');
+        return;
+      }
 
-        const message = document.getElementById('message').value;
-        const username = document.getElementById('username').value;
+      const message = document.getElementById('message').value;
+      const username = document.getElementById('username').value;
 
-        const sendMessage = JSON.stringify([{ username, message }]);
+      const sendMessage = JSON.stringify([{ username, message }]);
 
-        ws.send(sendMessage);
-        showMessage(sendMessage);
-    }
+      ws.send(sendMessage);
+      showMessage(sendMessage);
+    };
 </script>
